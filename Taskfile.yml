@@ -1,0 +1,48 @@
+version: "3"
+
+vars:
+  PROJECT: "ProjectName"
+  REDBEAN: "{{.PROJECT}}.com"
+  REDBEAN_VERSION: "3.0.0"
+
+tasks:
+  default:
+    desc: "Run all tasks"
+    cmds:
+      - task: download 
+      - task: add 
+      - task: start
+  download:
+    vars: 
+      UTILS: [ 
+        "https://redbean.dev/redbean-3.0.0.com",
+        "https://redbean.dev/sqlite3.com",
+        "https://redbean.dev/zip.com",
+        "https://redbean.dev/unzip.com",
+        "https://raw.githubusercontent.com/jart/cosmopolitan/2.2/tool/net/definitions.lua"
+      ]
+    sources:
+      - utils/redbean-3.0.0.com
+      - utils/sqlite3.com
+      - utils/zip.com
+      - utils/unzip.com
+      - utils/definitions.lua
+    cmds:
+      - mkdir -p src && mkdir -p utils
+      - for: 
+          var: UTILS
+        cmd: cd utils && curl {{.ITEM}} -o $(basename {{.ITEM}}) && chmod +x $(basename {{.ITEM}})
+  add: 
+    cmds:
+      - cp -f utils/redbean-{{.REDBEAN_VERSION}}.com {{.REDBEAN}}
+      - bash ./utils/zip.com -r ../{{.REDBEAN}} src
+  start: 
+    cmds:
+      - chmod +x {{.REDBEAN}}
+      - bash ./{{.REDBEAN}} -vv
+  clean: 
+    cmds:
+      - rm -r utils/ --force
+      - rm -r {{.REDBEAN}}  --force
+      - rm -r {{.PROJECT}}.log  --force
+      - rm -r .task/checksum --force
