@@ -7,7 +7,7 @@ Pretty simple:
 run `task` and it will: 
 - create the project structure
 - download all related redbean utilities
-- copy all files from 'src' into the redbean project folder (rewriting from a fresh version everytime that is cached). 
+- copy all files from 'src' into the redbean project executable (rewriting from a fresh version everytime that is cached). 
 - start the redbean server
 
 other commands: download, add (adds all files from src), start, and clean (removes all created files and folders). 
