@@ -1,7 +1,9 @@
 version: "3"
 
+interval: 500ms
+
 vars:
-  PROJECT: "ProjectName"
+  PROJECT: "Saturn-API"
   REDBEAN: "{{.PROJECT}}.com"
   REDBEAN_VERSION: "3.0.0"
 
@@ -34,15 +36,25 @@ tasks:
         cmd: cd utils && curl {{.ITEM}} -o $(basename {{.ITEM}}) && chmod +x $(basename {{.ITEM}})
   add: 
     cmds:
-      - cp -f utils/redbean-{{.REDBEAN_VERSION}}.com {{.REDBEAN}}
-      - bash ./utils/zip.com -r ../{{.REDBEAN}} src
+      # - cp -f utils/redbean-{{.REDBEAN_VERSION}}.com {{.REDBEAN}}
+      - cd src && zip -r ../utils/redbean-{{.REDBEAN_VERSION}}.com . --out ../{{.REDBEAN}}
+      # maybe use the zip 'filesync feature?'
   start: 
     cmds:
       - chmod +x {{.REDBEAN}}
-      - bash ./{{.REDBEAN}} -vv
+      - sh ./{{.REDBEAN}} -vv
   clean: 
     cmds:
       - rm -r utils/ --force
       - rm -r {{.REDBEAN}}  --force
       - rm -r {{.PROJECT}}.log  --force
       - rm -r .task/checksum --force
+  dev: 
+    desc: Builds and watches on any changes 
+    watch: true
+    sources:
+      - 'src/*'
+      - 'src/*/*' 
+    cmds: 
+      - task: add
+      - task: start
